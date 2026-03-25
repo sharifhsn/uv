@@ -32,13 +32,21 @@ use uv_python::{
     PythonPreference, PythonRequest, PythonVariant, PythonVersionFile, VersionFileDiscoveryOptions,
     VersionRequest,
 };
-use uv_resolver::ResolutionMode;
+use uv_resolver::{Lock, ResolutionMode};
 use uv_settings::{PythonInstallMirrors, ToolOptions};
 use uv_shell::Shell;
 use uv_tool::{InstalledTools, Tool, ToolEntrypoint, entrypoint_paths};
 use uv_warnings::warn_user_once;
+use uv_workspace::{DiscoveryOptions, VirtualProject, WorkspaceCache};
 
 use crate::commands::pip;
+use crate::commands::pip::loggers::DefaultResolveLogger;
+use crate::commands::project::lock::{LockMode, LockOperation};
+use crate::commands::project::lock_target::LockTarget;
+use crate::commands::project::{PlatformState, ProjectError, PythonRequestSource};
+use crate::commands::reporters::PythonDownloadReporter;
+use crate::printer::Printer;
+use crate::settings::{LockCheckSource, ResolverInstallerSettings, ResolverSettings};
 
 /// An error raised when a tool package provides no executables.
 #[derive(Debug, Error)]
@@ -98,10 +106,6 @@ impl Hint for NoExecutablesError {
         hints
     }
 }
-use crate::commands::project::{ProjectError, PythonRequestSource};
-use crate::commands::reporters::PythonDownloadReporter;
-use crate::printer::Printer;
-use crate::settings::ResolverInstallerSettings;
 
 /// Return all packages which contain an executable with the given name.
 pub(super) fn matching_packages(name: &str, site_packages: &SitePackages) -> Vec<InstalledDist> {
@@ -712,4 +716,51 @@ fn warn_out_of_path(executable_directory: &Path) {
             );
         }
     }
+}
+
+/// Discover and validate a source-tree tool project for a locked installation.
+pub(crate) async fn locked_tool_project(
+    requirement: &Requirement,
+    interpreter: &Interpreter,
+    settings: &ResolverSettings,
+    state: &PlatformState,
+    client_builder: &BaseClientBuilder<'_>,
+    concurrency: &Concurrency,
+    cache: &Cache,
+    workspace_cache: &WorkspaceCache,
+    printer: Printer,
+    preview: Preview,
+) -> Result<(VirtualProject, Lock), ProjectError> {
+    let source_path = StaticMetadataDatabase::new(client_builder, state.git(), cache)
+        .materialize_source_tree(&requirement.source)
+        .await
+        .map_err(|err| ProjectError::Anyhow(err.into()))?
+        .ok_or_else(|| {
+            ProjectError::Anyhow(anyhow::anyhow!(
+                "`--locked` requires a tool from a source tree (e.g., a Git repository or local directory), but `{}` is not a source tree",
+                requirement.name.cyan()
+            ))
+        })?;
+
+    let project =
+        VirtualProject::discover(&source_path, &DiscoveryOptions::default(), workspace_cache)
+            .await?;
+    let universal_state = state.fork();
+    let lock = LockOperation::new(
+        LockMode::Locked(interpreter, LockCheckSource::LockedCli),
+        settings,
+        client_builder,
+        &universal_state,
+        Box::new(DefaultResolveLogger),
+        concurrency,
+        cache,
+        workspace_cache,
+        printer,
+        preview,
+    )
+    .execute(LockTarget::Workspace(project.workspace()))
+    .await?
+    .into_lock();
+
+    Ok((project, lock))
 }

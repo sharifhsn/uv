@@ -87,7 +87,7 @@ impl<'a, 'client> StaticMetadataDatabase<'a, 'client> {
     ///
     /// Directory requirements are already materialized. Git source trees are fetched into the
     /// Git cache and returned at the requested subdirectory.
-    async fn materialize_source_tree(
+    pub async fn materialize_source_tree(
         &self,
         source: &RequirementSource,
     ) -> Result<Option<Box<Path>>, Error> {
