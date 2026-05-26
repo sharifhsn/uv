@@ -211,7 +211,7 @@ pub struct GlobalArgs {
 
     /// Deprecated version of [`Self::python_downloads`].
     #[arg(global = true, long, hide = true)]
-    pub python_fetch: Option<PythonDownloads>,
+    pub(crate) python_fetch: Option<PythonDownloads>,
 
     /// Use quiet output.
     ///
@@ -2903,16 +2903,16 @@ pub struct PipTreeArgs {
 #[derive(Args)]
 pub struct PipDebugArgs {
     #[arg(long, hide = true)]
-    pub platform: Option<String>,
+    pub(crate) platform: Option<String>,
 
     #[arg(long, hide = true)]
-    pub python_version: Option<String>,
+    pub(crate) python_version: Option<String>,
 
     #[arg(long, hide = true)]
-    pub implementation: Option<String>,
+    pub(crate) implementation: Option<String>,
 
     #[arg(long, hide = true)]
-    pub abi: Option<String>,
+    pub(crate) abi: Option<String>,
 }
 
 #[derive(Args)]
@@ -5621,7 +5621,7 @@ pub struct UvxArgs {
 
     /// Display the uvx version.
     #[arg(short = 'V', long, action = clap::ArgAction::Version)]
-    pub version: Option<bool>,
+    pub(crate) version: Option<bool>,
 }
 
 #[derive(Args)]
@@ -6758,7 +6758,7 @@ pub struct AuthLogoutArgs {
         value_enum,
         env = EnvVars::UV_KEYRING_PROVIDER,
     )]
-    pub keyring_provider: Option<KeyringProviderType>,
+    pub(crate) keyring_provider: Option<KeyringProviderType>,
 }
 
 #[derive(Args)]
@@ -6794,7 +6794,7 @@ pub struct AuthLoginArgs {
         value_enum,
         env = EnvVars::UV_KEYRING_PROVIDER,
     )]
-    pub keyring_provider: Option<KeyringProviderType>,
+    pub(crate) keyring_provider: Option<KeyringProviderType>,
 }
 
 #[derive(Args)]
@@ -6813,7 +6813,7 @@ pub struct AuthTokenArgs {
         value_enum,
         env = EnvVars::UV_KEYRING_PROVIDER,
     )]
-    pub keyring_provider: Option<KeyringProviderType>,
+    pub(crate) keyring_provider: Option<KeyringProviderType>,
 }
 
 #[derive(Args)]
@@ -6854,35 +6854,35 @@ pub struct GenerateShellCompletionArgs {
 
     // Hide unused global options.
     #[arg(long, short, hide = true)]
-    pub no_cache: bool,
+    pub(crate) no_cache: bool,
     #[arg(long, hide = true)]
-    pub cache_dir: Option<PathBuf>,
+    pub(crate) cache_dir: Option<PathBuf>,
 
     #[arg(long, hide = true)]
-    pub python_preference: Option<PythonPreference>,
+    pub(crate) python_preference: Option<PythonPreference>,
     #[arg(long, hide = true)]
-    pub no_python_downloads: bool,
+    pub(crate) no_python_downloads: bool,
 
     #[arg(long, short, action = clap::ArgAction::Count, conflicts_with = "verbose", hide = true)]
-    pub quiet: u8,
+    pub(crate) quiet: u8,
     #[arg(long, short, action = clap::ArgAction::Count, conflicts_with = "quiet", hide = true)]
-    pub verbose: u8,
+    pub(crate) verbose: u8,
     #[arg(long, conflicts_with = "no_color", hide = true)]
-    pub color: Option<ColorChoice>,
+    pub(crate) color: Option<ColorChoice>,
     #[arg(long, hide = true)]
-    pub native_tls: bool,
+    pub(crate) native_tls: bool,
     #[arg(long, hide = true)]
-    pub offline: bool,
+    pub(crate) offline: bool,
     #[arg(long, hide = true)]
-    pub no_progress: bool,
+    pub(crate) no_progress: bool,
     #[arg(long, hide = true)]
-    pub config_file: Option<PathBuf>,
+    pub(crate) config_file: Option<PathBuf>,
     #[arg(long, hide = true)]
-    pub no_config: bool,
+    pub(crate) no_config: bool,
     #[arg(long, short, action = clap::ArgAction::HelpShort, hide = true)]
-    pub help: Option<bool>,
+    pub(crate) help: Option<bool>,
     #[arg(short = 'V', long, hide = true)]
-    pub version: bool,
+    pub(crate) version: bool,
 }
 
 #[derive(Args)]
@@ -6981,19 +6981,19 @@ pub struct IndexArgs {
         value_parser = parse_find_links,
         help_heading = "Index options"
     )]
-    pub find_links: Option<Vec<Maybe<PipFindLinks>>>,
+    pub(crate) find_links: Option<Vec<Maybe<PipFindLinks>>>,
 
     /// Ignore the registry index (e.g., PyPI), instead relying on direct URL dependencies and those
     /// provided via `--find-links`.
     #[arg(long, help_heading = "Index options")]
-    pub no_index: bool,
+    pub(crate) no_index: bool,
 }
 
 #[derive(Args)]
 pub struct RefreshArgs {
     /// Refresh all cached data.
     #[arg(long, overrides_with("no_refresh"), help_heading = "Cache options")]
-    pub refresh: bool,
+    pub(crate) refresh: bool,
 
     #[arg(
         long,
@@ -7001,11 +7001,11 @@ pub struct RefreshArgs {
         hide = true,
         help_heading = "Cache options"
     )]
-    pub no_refresh: bool,
+    pub(crate) no_refresh: bool,
 
     /// Refresh cached data for a specific package.
     #[arg(long, help_heading = "Cache options", value_hint = ValueHint::Other)]
-    pub refresh_package: Vec<PackageName>,
+    pub(crate) refresh_package: Vec<PackageName>,
 }
 
 #[derive(Args)]
@@ -7022,7 +7022,7 @@ pub struct BuildOptionsArgs {
         value_parser = clap::builder::BoolishValueParser::new(),
         help_heading = "Build options",
     )]
-    pub no_build: bool,
+    pub(crate) no_build: bool,
 
     #[arg(
         long,
@@ -7030,7 +7030,7 @@ pub struct BuildOptionsArgs {
         hide = true,
         help_heading = "Build options"
     )]
-    pub build: bool,
+    pub(crate) build: bool,
 
     /// Don't build source distributions for a specific package [env: `UV_NO_BUILD_PACKAGE`=]
     #[arg(
@@ -7039,7 +7039,7 @@ pub struct BuildOptionsArgs {
         value_delimiter = ' ',
         value_hint = ValueHint::Other,
     )]
-    pub no_build_package: Vec<PackageName>,
+    pub(crate) no_build_package: Vec<PackageName>,
 
     /// Don't install pre-built wheels.
     ///
@@ -7052,7 +7052,7 @@ pub struct BuildOptionsArgs {
         value_parser = clap::builder::BoolishValueParser::new(),
         help_heading = "Build options"
     )]
-    pub no_binary: bool,
+    pub(crate) no_binary: bool,
 
     #[arg(
         long,
@@ -7060,7 +7060,7 @@ pub struct BuildOptionsArgs {
         hide = true,
         help_heading = "Build options"
     )]
-    pub binary: bool,
+    pub(crate) binary: bool,
 
     /// Don't install pre-built wheels for a specific package [env: `UV_NO_BINARY_PACKAGE`=]
     #[arg(
@@ -7069,14 +7069,14 @@ pub struct BuildOptionsArgs {
         value_delimiter = ' ',
         value_hint = ValueHint::Other,
     )]
-    pub no_binary_package: Vec<PackageName>,
+    pub(crate) no_binary_package: Vec<PackageName>,
 }
 
 /// Arguments that are used by commands that need to install (but not resolve) packages.
 #[derive(Args)]
 pub struct InstallerArgs {
     #[command(flatten)]
-    pub index_args: IndexArgs,
+    pub(crate) index_args: IndexArgs,
 
     /// Reinstall all packages, regardless of whether they're already installed. Implies
     /// `--refresh`.
@@ -7086,7 +7086,7 @@ pub struct InstallerArgs {
         overrides_with("no_reinstall"),
         help_heading = "Installer options"
     )]
-    pub reinstall: bool,
+    pub(crate) reinstall: bool,
 
     #[arg(
         long,
@@ -7094,12 +7094,12 @@ pub struct InstallerArgs {
         hide = true,
         help_heading = "Installer options"
     )]
-    pub no_reinstall: bool,
+    pub(crate) no_reinstall: bool,
 
     /// Reinstall a specific package, regardless of whether it's already installed. Implies
     /// `--refresh-package`.
     #[arg(long, help_heading = "Installer options", value_hint = ValueHint::Other)]
-    pub reinstall_package: Vec<PackageName>,
+    pub(crate) reinstall_package: Vec<PackageName>,
 
     /// The strategy to use when resolving against multiple index URLs.
     ///
@@ -7113,7 +7113,7 @@ pub struct InstallerArgs {
         env = EnvVars::UV_INDEX_STRATEGY,
         help_heading = "Index options"
     )]
-    pub index_strategy: Option<IndexStrategy>,
+    pub(crate) index_strategy: Option<IndexStrategy>,
 
     /// Attempt to use `keyring` for authentication for index URLs.
     ///
@@ -7127,7 +7127,7 @@ pub struct InstallerArgs {
         env = EnvVars::UV_KEYRING_PROVIDER,
         help_heading = "Index options"
     )]
-    pub keyring_provider: Option<KeyringProviderType>,
+    pub(crate) keyring_provider: Option<KeyringProviderType>,
 
     /// Settings to pass to the PEP 517 build backend, specified as `KEY=VALUE` pairs.
     #[arg(
@@ -7136,7 +7136,7 @@ pub struct InstallerArgs {
         alias = "config-settings",
         help_heading = "Build options"
     )]
-    pub config_setting: Option<Vec<ConfigSettingEntry>>,
+    pub(crate) config_setting: Option<Vec<ConfigSettingEntry>>,
 
     /// Settings to pass to the PEP 517 build backend for a specific package, specified as `PACKAGE:KEY=VALUE` pairs.
     #[arg(
@@ -7144,7 +7144,7 @@ pub struct InstallerArgs {
         alias = "config-settings-package",
         help_heading = "Build options"
     )]
-    pub config_settings_package: Option<Vec<ConfigSettingPackageEntry>>,
+    pub(crate) config_settings_package: Option<Vec<ConfigSettingPackageEntry>>,
 
     /// Disable isolation when building source distributions.
     ///
@@ -7156,7 +7156,7 @@ pub struct InstallerArgs {
         env = EnvVars::UV_NO_BUILD_ISOLATION,
         value_parser = clap::builder::BoolishValueParser::new(),
     )]
-    pub no_build_isolation: bool,
+    pub(crate) no_build_isolation: bool,
 
     #[arg(
         long,
@@ -7164,7 +7164,7 @@ pub struct InstallerArgs {
         hide = true,
         help_heading = "Build options"
     )]
-    pub build_isolation: bool,
+    pub(crate) build_isolation: bool,
 
     /// Limit candidate packages to those that were uploaded prior to the given date.
     ///
@@ -7181,7 +7181,7 @@ pub struct InstallerArgs {
     /// number of seconds assuming that a day is 24 hours (e.g., DST transitions are ignored).
     /// Calendar units such as months and years are not allowed.
     #[arg(long, env = EnvVars::UV_EXCLUDE_NEWER, help_heading = "Resolver options")]
-    pub exclude_newer: Option<ExcludeNewerValue>,
+    pub(crate) exclude_newer: Option<ExcludeNewerValue>,
 
     /// Limit candidate packages for specific packages to those that were uploaded prior to the
     /// given date.
@@ -7198,7 +7198,7 @@ pub struct InstallerArgs {
     ///
     /// Can be provided multiple times for different packages.
     #[arg(long, help_heading = "Resolver options")]
-    pub exclude_newer_package: Option<Vec<ExcludeNewerPackageEntry>>,
+    pub(crate) exclude_newer_package: Option<Vec<ExcludeNewerPackageEntry>>,
 
     /// The method to use when installing packages from the global cache.
     ///
@@ -7215,7 +7215,7 @@ pub struct InstallerArgs {
         env = EnvVars::UV_LINK_MODE,
         help_heading = "Installer options"
     )]
-    pub link_mode: Option<uv_install_wheel::LinkMode>,
+    pub(crate) link_mode: Option<uv_install_wheel::LinkMode>,
 
     /// Compile Python files to bytecode after installation.
     ///
@@ -7235,7 +7235,7 @@ pub struct InstallerArgs {
         env = EnvVars::UV_COMPILE_BYTECODE,
         value_parser = clap::builder::BoolishValueParser::new(),
     )]
-    pub compile_bytecode: bool,
+    pub(crate) compile_bytecode: bool,
 
     #[arg(
         long,
@@ -7244,7 +7244,7 @@ pub struct InstallerArgs {
         hide = true,
         help_heading = "Installer options"
     )]
-    pub no_compile_bytecode: bool,
+    pub(crate) no_compile_bytecode: bool,
 
     /// Ignore the `tool.uv.sources` table when resolving dependencies. Used to lock against the
     /// standards-compliant, publishable package metadata, as opposed to using any workspace, Git,
@@ -7255,18 +7255,18 @@ pub struct InstallerArgs {
         value_parser = clap::builder::BoolishValueParser::new(),
         help_heading = "Resolver options"
     )]
-    pub no_sources: bool,
+    pub(crate) no_sources: bool,
 
     /// Don't use sources from the `tool.uv.sources` table for the specified packages [env: `UV_NO_SOURCES_PACKAGE`=]
     #[arg(long, help_heading = "Resolver options", value_delimiter = ' ')]
-    pub no_sources_package: Vec<PackageName>,
+    pub(crate) no_sources_package: Vec<PackageName>,
 }
 
 /// Arguments that are used by commands that need to resolve (but not install) packages.
 #[derive(Args)]
 pub struct ResolverArgs {
     #[command(flatten)]
-    pub index_args: IndexArgs,
+    pub(crate) index_args: IndexArgs,
 
     /// Allow package upgrades, ignoring pinned versions in any existing output file. Implies
     /// `--refresh`.
@@ -7276,7 +7276,7 @@ pub struct ResolverArgs {
         overrides_with("no_upgrade"),
         help_heading = "Resolver options"
     )]
-    pub upgrade: bool,
+    pub(crate) upgrade: bool,
 
     #[arg(
         long,
@@ -7284,17 +7284,17 @@ pub struct ResolverArgs {
         hide = true,
         help_heading = "Resolver options"
     )]
-    pub no_upgrade: bool,
+    pub(crate) no_upgrade: bool,
 
     /// Allow upgrades for a specific package, ignoring pinned versions in any existing output
     /// file. Implies `--refresh-package`.
     #[arg(long, short = 'P', help_heading = "Resolver options")]
-    pub upgrade_package: Vec<Requirement<VerbatimParsedUrl>>,
+    pub(crate) upgrade_package: Vec<Requirement<VerbatimParsedUrl>>,
 
     /// Allow upgrades for all packages in a dependency group, ignoring pinned versions in any
     /// existing output file.
     #[arg(long, help_heading = "Resolver options")]
-    pub upgrade_group: Vec<GroupName>,
+    pub(crate) upgrade_group: Vec<GroupName>,
 
     /// The strategy to use when resolving against multiple index URLs.
     ///
@@ -7308,7 +7308,7 @@ pub struct ResolverArgs {
         env = EnvVars::UV_INDEX_STRATEGY,
         help_heading = "Index options"
     )]
-    pub index_strategy: Option<IndexStrategy>,
+    pub(crate) index_strategy: Option<IndexStrategy>,
 
     /// Attempt to use `keyring` for authentication for index URLs.
     ///
@@ -7322,7 +7322,7 @@ pub struct ResolverArgs {
         env = EnvVars::UV_KEYRING_PROVIDER,
         help_heading = "Index options"
     )]
-    pub keyring_provider: Option<KeyringProviderType>,
+    pub(crate) keyring_provider: Option<KeyringProviderType>,
 
     /// The strategy to use when selecting between the different compatible versions for a given
     /// package requirement.
@@ -7334,7 +7334,7 @@ pub struct ResolverArgs {
         env = EnvVars::UV_RESOLUTION,
         help_heading = "Resolver options"
     )]
-    pub resolution: Option<ResolutionMode>,
+    pub(crate) resolution: Option<ResolutionMode>,
 
     /// The strategy to use when considering pre-release versions.
     ///
@@ -7347,10 +7347,10 @@ pub struct ResolverArgs {
         env = EnvVars::UV_PRERELEASE,
         help_heading = "Resolver options"
     )]
-    pub prerelease: Option<PrereleaseMode>,
+    pub(crate) prerelease: Option<PrereleaseMode>,
 
     #[arg(long, hide = true, help_heading = "Resolver options")]
-    pub pre: bool,
+    pub(crate) pre: bool,
 
     /// The strategy to use when selecting multiple versions of a given package across Python
     /// versions and platforms.
@@ -7368,7 +7368,7 @@ pub struct ResolverArgs {
         env = EnvVars::UV_FORK_STRATEGY,
         help_heading = "Resolver options"
     )]
-    pub fork_strategy: Option<ForkStrategy>,
+    pub(crate) fork_strategy: Option<ForkStrategy>,
 
     /// Settings to pass to the PEP 517 build backend, specified as `KEY=VALUE` pairs.
     #[arg(
@@ -7377,7 +7377,7 @@ pub struct ResolverArgs {
         alias = "config-settings",
         help_heading = "Build options"
     )]
-    pub config_setting: Option<Vec<ConfigSettingEntry>>,
+    pub(crate) config_setting: Option<Vec<ConfigSettingEntry>>,
 
     /// Settings to pass to the PEP 517 build backend for a specific package, specified as `PACKAGE:KEY=VALUE` pairs.
     #[arg(
@@ -7385,7 +7385,7 @@ pub struct ResolverArgs {
         alias = "config-settings-package",
         help_heading = "Build options"
     )]
-    pub config_settings_package: Option<Vec<ConfigSettingPackageEntry>>,
+    pub(crate) config_settings_package: Option<Vec<ConfigSettingPackageEntry>>,
 
     /// Disable isolation when building source distributions.
     ///
@@ -7397,13 +7397,13 @@ pub struct ResolverArgs {
         env = EnvVars::UV_NO_BUILD_ISOLATION,
         value_parser = clap::builder::BoolishValueParser::new(),
     )]
-    pub no_build_isolation: bool,
+    pub(crate) no_build_isolation: bool,
 
     /// Disable isolation when building source distributions for a specific package.
     ///
     /// Assumes that the packages' build dependencies specified by PEP 518 are already installed.
     #[arg(long, help_heading = "Build options", value_hint = ValueHint::Other)]
-    pub no_build_isolation_package: Vec<PackageName>,
+    pub(crate) no_build_isolation_package: Vec<PackageName>,
 
     #[arg(
         long,
@@ -7411,7 +7411,7 @@ pub struct ResolverArgs {
         hide = true,
         help_heading = "Build options"
     )]
-    pub build_isolation: bool,
+    pub(crate) build_isolation: bool,
 
     /// Limit candidate packages to those that were uploaded prior to the given date.
     ///
@@ -7428,7 +7428,7 @@ pub struct ResolverArgs {
     /// number of seconds assuming that a day is 24 hours (e.g., DST transitions are ignored).
     /// Calendar units such as months and years are not allowed.
     #[arg(long, env = EnvVars::UV_EXCLUDE_NEWER, help_heading = "Resolver options")]
-    pub exclude_newer: Option<ExcludeNewerValue>,
+    pub(crate) exclude_newer: Option<ExcludeNewerValue>,
 
     /// Limit candidate packages for specific packages to those that were uploaded prior to the
     /// given date.
@@ -7445,7 +7445,7 @@ pub struct ResolverArgs {
     ///
     /// Can be provided multiple times for different packages.
     #[arg(long, help_heading = "Resolver options")]
-    pub exclude_newer_package: Option<Vec<ExcludeNewerPackageEntry>>,
+    pub(crate) exclude_newer_package: Option<Vec<ExcludeNewerPackageEntry>>,
 
     /// The method to use when installing packages from the global cache.
     ///
@@ -7464,7 +7464,7 @@ pub struct ResolverArgs {
         env = EnvVars::UV_LINK_MODE,
         help_heading = "Installer options"
     )]
-    pub link_mode: Option<uv_install_wheel::LinkMode>,
+    pub(crate) link_mode: Option<uv_install_wheel::LinkMode>,
 
     /// Ignore the `tool.uv.sources` table when resolving dependencies. Used to lock against the
     /// standards-compliant, publishable package metadata, as opposed to using any workspace, Git,
@@ -7475,11 +7475,11 @@ pub struct ResolverArgs {
         value_parser = clap::builder::BoolishValueParser::new(),
         help_heading = "Resolver options",
     )]
-    pub no_sources: bool,
+    pub(crate) no_sources: bool,
 
     /// Don't use sources from the `tool.uv.sources` table for the specified packages [env: `UV_NO_SOURCES_PACKAGE`=]
     #[arg(long, help_heading = "Resolver options", value_delimiter = ' ')]
-    pub no_sources_package: Vec<PackageName>,
+    pub(crate) no_sources_package: Vec<PackageName>,
 }
 
 /// Arguments that are used by commands that need to resolve and install packages.
@@ -7763,7 +7763,7 @@ pub struct ResolverInstallerArgs {
 #[derive(Args)]
 pub struct FetchArgs {
     #[command(flatten)]
-    pub index_args: IndexArgs,
+    pub(crate) index_args: IndexArgs,
 
     /// The strategy to use when resolving against multiple index URLs.
     ///
@@ -7777,7 +7777,7 @@ pub struct FetchArgs {
         env = EnvVars::UV_INDEX_STRATEGY,
         help_heading = "Index options"
     )]
-    pub index_strategy: Option<IndexStrategy>,
+    pub(crate) index_strategy: Option<IndexStrategy>,
 
     /// Attempt to use `keyring` for authentication for index URLs.
     ///
@@ -7791,7 +7791,7 @@ pub struct FetchArgs {
         env = EnvVars::UV_KEYRING_PROVIDER,
         help_heading = "Index options"
     )]
-    pub keyring_provider: Option<KeyringProviderType>,
+    pub(crate) keyring_provider: Option<KeyringProviderType>,
 
     /// Limit candidate packages to those that were uploaded prior to the given date.
     ///
@@ -7808,7 +7808,7 @@ pub struct FetchArgs {
     /// number of seconds assuming that a day is 24 hours (e.g., DST transitions are ignored).
     /// Calendar units such as months and years are not allowed.
     #[arg(long, env = EnvVars::UV_EXCLUDE_NEWER, help_heading = "Resolver options")]
-    pub exclude_newer: Option<ExcludeNewerValue>,
+    pub(crate) exclude_newer: Option<ExcludeNewerValue>,
 }
 
 #[derive(Args)]
