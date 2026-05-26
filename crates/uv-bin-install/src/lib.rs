@@ -59,7 +59,7 @@ impl Binary {
     /// The name of the binary.
     ///
     /// See [`Binary::executable`] for the platform-specific executable name.
-    pub fn name(&self) -> &'static str {
+    pub(crate) fn name(self) -> &'static str {
         match self {
             Self::Ruff => "ruff",
             Self::Uv => "uv",
@@ -167,7 +167,7 @@ impl Binary {
     }
 
     /// Get the executable name
-    pub fn executable(&self) -> String {
+    pub(crate) fn executable(self) -> String {
         format!("{}{}", self.name(), std::env::consts::EXE_SUFFIX)
     }
 }

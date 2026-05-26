@@ -260,13 +260,13 @@ impl<'a> BaseClientBuilder<'a> {
     }
 
     #[must_use]
-    pub fn markers(mut self, markers: &'a MarkerEnvironment) -> Self {
+    pub(crate) fn markers(mut self, markers: &'a MarkerEnvironment) -> Self {
         self.markers = Some(markers);
         self
     }
 
     #[must_use]
-    pub fn platform(mut self, platform: &'a Platform) -> Self {
+    pub(crate) fn platform(mut self, platform: &'a Platform) -> Self {
         self.platform = Some(platform);
         self
     }
@@ -278,7 +278,7 @@ impl<'a> BaseClientBuilder<'a> {
     }
 
     #[must_use]
-    pub fn indexes(mut self, indexes: Indexes) -> Self {
+    pub(crate) fn indexes(mut self, indexes: Indexes) -> Self {
         self.indexes = indexes;
         self
     }
@@ -430,7 +430,7 @@ impl<'a> BaseClientBuilder<'a> {
     }
 
     /// Share the underlying client between two different middleware configurations.
-    pub fn wrap_existing(&self, existing: &BaseClient) -> BaseClient {
+    pub(crate) fn wrap_existing(&self, existing: &BaseClient) -> BaseClient {
         // Wrap in any relevant middleware and handle connectivity.
         let client = RedirectClientWithMiddleware {
             client: self.apply_middleware(existing.raw_client.clone()),
@@ -714,14 +714,14 @@ impl BaseClient {
     }
 
     /// Returns `true` if the host is trusted to use the insecure client.
-    pub fn disable_ssl(&self, url: &DisplaySafeUrl) -> bool {
+    pub(crate) fn disable_ssl(&self, url: &DisplaySafeUrl) -> bool {
         self.allow_insecure_host
             .iter()
             .any(|allow_insecure_host| allow_insecure_host.matches(url))
     }
 
     /// The configured client read timeout.
-    pub fn read_timeout(&self) -> Duration {
+    pub(crate) fn read_timeout(&self) -> Duration {
         self.read_timeout
     }
 
@@ -740,7 +740,7 @@ impl BaseClient {
         retry_policy(self.retries, self.no_retry_delay)
     }
 
-    pub fn credentials_cache(&self) -> &CredentialsCache {
+    pub(crate) fn credentials_cache(&self) -> &CredentialsCache {
         &self.credentials_cache
     }
 
@@ -778,12 +778,12 @@ impl RedirectClientWithMiddleware {
     }
 
     /// Convenience method to make a `HEAD` request to a URL.
-    pub fn head<U: IntoUrl>(&self, url: U) -> RequestBuilder<'_> {
+    pub(crate) fn head<U: IntoUrl>(&self, url: U) -> RequestBuilder<'_> {
         RequestBuilder::new(self.client.head(url), self)
     }
 
     /// Executes a request, applying the redirect policy.
-    pub async fn execute(&self, req: Request) -> reqwest_middleware::Result<Response> {
+    pub(crate) async fn execute(&self, req: Request) -> reqwest_middleware::Result<Response> {
         match self.redirect_policy {
             RedirectPolicy::BypassMiddleware => self.client.execute(req).await,
             RedirectPolicy::RetriggerMiddleware => self.execute_with_redirect_handling(req).await,
@@ -1019,7 +1019,7 @@ pub struct RequestBuilder<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    pub fn new(
+    pub(crate) fn new(
         builder: reqwest_middleware::RequestBuilder,
         client: &'a RedirectClientWithMiddleware,
     ) -> Self {
