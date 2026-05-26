@@ -3,7 +3,8 @@ pub use crate::git::{GIT, GIT_LFS, GitError};
 pub use crate::resolver::{
     GitResolver, GitResolverError, RepositoryReference, ResolvedRepositoryReference,
 };
-pub use crate::source::{Fetch, GitSource, Reporter};
+pub(crate) use crate::source::GitSource;
+pub use crate::source::{Fetch, Reporter};
 
 mod credentials;
 mod git;
