@@ -1845,7 +1845,7 @@ impl TestContext {
     }
 
     /// For when we add pypy to the test suite.
-    pub(crate) fn python_kind(&self) -> &'static str {
+    pub fn python_kind(&self) -> &'static str {
         "python"
     }
 
